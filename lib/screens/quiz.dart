@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:convert';
 import '../models/question.dart';
+import 'quizend.dart';
 
 
 class Quiz extends StatefulWidget{
@@ -28,15 +29,59 @@ class _QuizState extends State<Quiz>{
 	List<Question> all_questions = [];
 
 	int qindex = 0;
+	int score = 0;
+	bool showOptions = true;
+	bool showAnswer = false;
+	bool correctAnswer = false;
+	bool wrongAnswer = false;
+	bool showNext = false;
+	bool showSubmit = false;
 
-	/*
-	@override
-	void initState(){
-		super.initState();
 
-		this.fetchData();
+	void checkAnswer(int qind, int opind){
+		print("Question Index ${qind}");
+		print("Option Index ${opind}");
+
+		setState((){
+			showOptions = false;
+			showAnswer = true;
+		});
+
+		if (qind == 9){
+			setState((){
+				showNext = false;
+				showSubmit = true;
+			});
+		}else{
+		
+			setState((){
+				showNext = true;
+			});
+		}
+
+		if (all_questions[qind].answer == all_questions[qindex].options[opind]){
+			setState((){
+				score++;
+				correctAnswer = true;
+			});
+		}else{
+			setState((){
+				wrongAnswer = true;
+			});
+		}
 	}
-	*/
+
+	void nextQuestion(){
+		setState((){
+			showOptions = true;
+			showAnswer = false;
+			showNext = false;
+			correctAnswer = false;
+			wrongAnswer = false;
+			qindex++;
+		});
+	}
+
 
 
 	Future<List<Question>> fetchData() async{
@@ -54,13 +99,6 @@ class _QuizState extends State<Quiz>{
 		);
 
 		var data = json.decode(response.body);
-
-		/*
-		setState((){
-			questionData = data["results"];
-		});
-
-		*/
 
 		for (var q in data["results"]){
 
@@ -144,19 +182,107 @@ class _QuizState extends State<Quiz>{
 											),								
 										),
 
-										SizedBox(height: 20.0),
+										SizedBox(height: 90.0),
 
-										Center(
+										Visibility(
+											visible: correctAnswer,
+											child: Text(
+												"You Answered Correct",
+												style: TextStyle(
+													color: Colors.green,
+													fontSize: 30.0,
+													fontWeight: FontWeight.bold,
+												),
+											),
+										),
+
+										Visibility(
+											visible: wrongAnswer,
+											child: Text(
+												"You Answered Wrong",
+												style: TextStyle(
+													color: Colors.red,
+													fontSize: 30.0,
+													fontWeight: FontWeight.bold,
+												),
+											),
+										),
+
+										SizedBox(height: 40.0),
+
+
+										Visibility(
+											visible: showAnswer,
+											child: Text(
+												"Answer: ${snapshot.data[qindex].answer}",
+												style: TextStyle(
+													fontSize: 25.0,
+													fontWeight: FontWeight.bold,
+												),
+											),
+										),
+
+										SizedBox(height: 25.0),
+
+										Visibility(
+											visible: showNext,
+											child: FlatButton(
+												color: Colors.cyan,
+												textColor: Colors.white,
+												padding: EdgeInsets.all(8.0),
+												splashColor: Colors.cyanAccent,
+												onPressed: (){
+													nextQuestion();
+												},
+												child: Text(
+													"Next Question",
+													style: TextStyle(fontSize: 20.0),
+												),
+											),
+										),
+
+										Visibility(
+											visible: showSubmit,
+											child: FlatButton(
+												color: Colors.cyan,
+												textColor: Colors.white,
+												padding: EdgeInsets.all(8.0),
+												splashColor: Colors.cyanAccent,
+												onPressed: (){
+													Navigator.push(
+														context,
+														MaterialPageRoute(
+															builder: (context) => QuizEnd(score: score),
+														),
+													);
+												},
+
+												child: Text(
+													"End Quiz",
+													style: TextStyle(fontSize: 20.0),
+												),
+											),
+										),
+
+										Visibility(
+											visible: showOptions,
+											child: 
+
+										Container(
+											child: Column(
+											children: <Widget>[
+											Center(
 											child: Card(
 												child: Padding(
 													padding: EdgeInsets.all(16.0),
 													child: InkWell(
 														splashColor: Colors.cyan.withAlpha(30),
 														onTap: (){
+															checkAnswer(qindex, 0);
 														},
 
 														child: Text(
-															snapshot.data[qindex].options[0]
+															snapshot.data[qindex].options[0],
 														),
 													),
 												),
@@ -171,6 +297,7 @@ class _QuizState extends State<Quiz>{
 													child: InkWell(
 														splashColor: Colors.cyan.withAlpha(30),
 														onTap: (){
+															checkAnswer(qindex, 1);
 														},
 
 														child: Text(
@@ -189,6 +316,7 @@ class _QuizState extends State<Quiz>{
 													child: InkWell(
 														splashColor: Colors.cyan.withAlpha(30),
 														onTap: (){
+															checkAnswer(qindex, 2);
 														},
 
 														child: Text(
@@ -207,6 +335,7 @@ class _QuizState extends State<Quiz>{
 													child: InkWell(
 														splashColor: Colors.cyan.withAlpha(30),
 														onTap: (){
+															checkAnswer(qindex, 3);
 														},
 
 														child: Text(
@@ -219,28 +348,12 @@ class _QuizState extends State<Quiz>{
 
 
 
-										/*
-										ListView(
-											children: <Widget>[
-												Card(child: ListTile(title: Text("Hello"))),
-												Card(child: ListTile(title: Text("Hoola"))),
-												/*
-												Card(
-													child: InkWell(
-														splashColor: Colors.cyan.withAlpha(30),
-														onTap: (){
-														},
+												],
+											),
+										),
+									),
+	
 
-														child: ListTile(
-															title: Text(
-																snapshot.data[qindex].options[0],
-															),
-														),
-													),
-												),
-												*/
-											],
-										),*/
 									],
 								),
 							);
