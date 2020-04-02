@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../models/category.dart';
+import './quiz.dart';
+
+
 
 
 class HomeScreen extends StatefulWidget{
@@ -10,22 +13,6 @@ class HomeScreen extends StatefulWidget{
 
 
 class _HomeScreenState extends State<HomeScreen>{
-	
-
-	List<Category> categories = [
-		Category("General Knowledge", 9, "assets/icons/brain.svg"),
-		Category("Film", 11, "assets/icons/popcorn.svg"),
-		Category("Video Games", 15, "assets/icons/game-controller.svg"),
-		Category("Computers", 18, "assets/icons/translation.svg"),
-		Category("Sports", 21, "assets/icons/volleyball.svg"),
-		Category("Geography", 22, "assets/icons/globe.svg"),
-		Category("Celebrities", 26, "assets/icons/star.svg"),
-		Category("History", 23, "assets/icons/history.svg"),
-		Category("Animals", 27, "assets/icons/lion.svg"),
-		Category("Vehicles", 28, "assets/icons/jeep.svg"),
-
-	];
-
 	@override
 	Widget build(BuildContext context){
 		return Scaffold(
@@ -48,8 +35,13 @@ class _HomeScreenState extends State<HomeScreen>{
 							child: InkWell(
 								splashColor: Colors.cyan.withAlpha(30),
 								onTap: (){
-									print(categories[index].id);
-									print(categories[index].icon);
+
+									Navigator.push(
+										context,
+										MaterialPageRoute(
+											builder: (context) => Quiz(catname: categories[index].name, catid: categories[index].id)
+										),
+									);
 								},
 
 								child: Column(
