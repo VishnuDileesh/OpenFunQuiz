@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'home.dart';
+import 'package:share/share.dart';
 
 class QuizEnd extends StatelessWidget{
 
@@ -43,12 +44,13 @@ class QuizEnd extends StatelessWidget{
 							),
 						),
 
+
 						SizedBox(height: 20.0),
 
 						FlatButton(
 							color: Colors.white,
 							textColor: Colors.cyan,
-							padding: EdgeInsets.all(8.0),
+							padding: EdgeInsets.all(12.0),
 							splashColor: Colors.cyanAccent,
 							onPressed: (){
 								Navigator.pushReplacement(
@@ -62,6 +64,24 @@ class QuizEnd extends StatelessWidget{
 								"Play Again",
 								style: TextStyle(
 									fontSize: 30.0,
+								),
+							),
+						),
+
+						SizedBox(height: 90.0),
+
+						FlatButton(
+							color: Colors.white,
+							textColor: Colors.cyan,
+							padding: EdgeInsets.all(12.0),
+							splashColor: Colors.cyanAccent,
+							onPressed: (){
+								Share.share("I scored ${score}/10 in OpenFunQuiz, Go and try out your geniusness");
+							},
+							child: Text(
+								"Share Score",
+								style: TextStyle(
+									fontSize: 25.0,
 								),
 							),
 						),
