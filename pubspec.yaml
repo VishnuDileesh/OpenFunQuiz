@@ -1,5 +1,5 @@
 name: OpenFunQuiz
-description: A new Flutter project.
+description: Simple Fun Quiz App built on top of OpenTDB API (free to use, user-contributed trivia question database). The app is very straight forward and privacy focused, hence doesn't ask for any additional permissions other than Internet use access, which is used only for the purpose loading of the quiz questions and answers. The app currently has 10 categories listed. App is open-sourced and anyone is free to contribute and support the project or to just fork the project from Github (https://github.com/VishnuDileesh/OpenFunQuiz), Would be happy to know that you had fun playing the quiz and also have learned some new knowledge through encountering new questions along the way.
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
