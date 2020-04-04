@@ -284,14 +284,15 @@ class _QuizState extends State<Quiz>{
 											child: FlatButton(
 												color: Colors.cyan,
 												textColor: Colors.white,
-												padding: EdgeInsets.all(8.0),
+												padding: EdgeInsets.all(16.0),
 												splashColor: Colors.cyanAccent,
 												onPressed: (){
-													Navigator.push(
+													Navigator.pushAndRemoveUntil(
 														context,
 														MaterialPageRoute(
 															builder: (context) => QuizEnd(score: score),
 														),
+														(Route<dynamic> route) => false,
 													);
 												},
 

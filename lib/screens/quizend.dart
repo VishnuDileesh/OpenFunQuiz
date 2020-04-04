@@ -16,15 +16,6 @@ class QuizEnd extends StatelessWidget{
 				child: Column(
 					mainAxisAlignment: MainAxisAlignment.center,
 					children: <Widget>[
-						/*Text(
-							"Great",
-							style: TextStyle(
-								color: Colors.white,
-								fontSize: 80.0,
-								fontWeight: FontWeight.bold,
-							),
-						),
-						*/
 
 						Text(
 							"You Scored:",
@@ -53,11 +44,12 @@ class QuizEnd extends StatelessWidget{
 							padding: EdgeInsets.all(12.0),
 							splashColor: Colors.cyanAccent,
 							onPressed: (){
-								Navigator.pushReplacement(
+								Navigator.pushAndRemoveUntil(
 									context,
 									MaterialPageRoute(
 										builder: (context) => HomeScreen()
 									),
+									(Route<dynamic> route) => false,
 								);
 							},
 							child: Text(
