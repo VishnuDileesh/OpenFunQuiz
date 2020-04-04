@@ -194,12 +194,265 @@ class _QuizState extends State<Quiz>{
 			),
 
 			body: Container(
-					child: LoadingScreen(),
+					child: (qloading == true)?
+					LoadingScreen():
+					SingleChildScrollView(
+						child: Column(
+							children: <Widget>[
+								SizedBox(height: 20.0),
+
+								Center(
+									child: Card(
+										child: Padding(
+											padding: EdgeInsets.all(16.0),
+											child: Text(
+												all_questions[qindex].quest,
+												style: TextStyle(
+													fontSize: 25.0,
+													fontWeight: FontWeight.bold,
+												),
+											),
+										),
+									),
+								),
+
+								SizedBox(height: 50.0),
+
+								Visibility(
+									visible: correctAnswer,
+									child: Text(
+										"You Answered Correct",
+										style: TextStyle(
+											color: Colors.green,
+											fontSize: 30.0,
+											fontWeight: FontWeight.bold,
+										),
+									),
+								),
+
+								Visibility(
+									visible: wrongAnswer,
+									child: Text(
+										"You Answered Wrong",
+										style: TextStyle(
+											color: Colors.red,
+											fontSize: 30.0,
+											fontWeight: FontWeight.bold,
+										),
+									),
+								),
+
+								Visibility(
+									visible: showAnswer,
+									child: Column(
+										children: <Widget>[
+											SizedBox(height: 20.0),
+
+											Center(
+												child: Text(
+													"Answer:",
+													style: TextStyle(
+														fontSize: 25.0,
+														fontWeight: FontWeight.bold,
+													),
+												),
+											),
+
+											SizedBox(height: 5.0,),
+
+											Center(
+												child: Text(
+													all_questions[qindex].answer,
+													style: TextStyle(
+														fontSize: 25.0,
+														fontWeight: FontWeight.bold,
+													),
+												),
+											),
+
+											SizedBox(height: 40.0,),
+
+										],
+									),
+								),
+
+								Visibility(
+									visible: showNext,
+									child: FlatButton(
+										color: Colors.cyan,
+										textColor: Colors.white,
+										padding: EdgeInsets.all(16.0),
+										splashColor: Colors.cyanAccent,
+										onPressed: (){
+											nextQuestion();
+										},
+										child: Text(
+											"Next Question",
+											style: TextStyle(
+												fontSize: 20.0,
+											),
+										),
+									),
+								),
+
+								Visibility(
+									visible: showSubmit,
+									child: FlatButton(
+										color: Colors.cyan,
+										textColor: Colors.white,
+										padding: EdgeInsets.all(16.0),
+										splashColor: Colors.cyanAccent,
+										onPressed: (){
+											Navigator.pushAndRemoveUntil(
+												context,
+												MaterialPageRoute(
+													builder: (context) => QuizEnd(score: score),
+												),
+												(Route<dynamic> route) => false,
+											);
+										},
+
+										child: Text(
+											"End Quiz",
+											style: TextStyle(fontSize: 20.0),
+										),
+									),
+								),
+
+								Visibility(
+									visible: showOptions,
+									child: Container(
+										child: Column(
+											children: <Widget>[
+												Padding(
+													padding: EdgeInsets.all(15.0),
+													child: SizedBox(
+														width: double.infinity,
+														child: Card(
+															child: Padding(
+																padding: EdgeInsets.all(19.0),
+																child: InkWell(
+																	splashColor: Colors.cyan.withAlpha(30),
+																	onTap: (){
+																		checkAnswer(qindex, 0);
+																	},
+
+																	child: Text(
+																		all_questions[qindex].options[0],
+																		style: TextStyle(
+																			fontSize: 20.0,
+																		),
+																	),
+																),
+															),
+														),
+													)
+												),
+
+
+												Padding(
+													padding: EdgeInsets.all(15.0),
+													child: SizedBox(
+														width: double.infinity,
+														child: Card(
+															child: Padding(
+																padding: EdgeInsets.all(19.0),
+																child: InkWell(
+																	splashColor: Colors.cyan.withAlpha(30),
+																	onTap: (){
+																		checkAnswer(qindex, 1);
+																	},
+
+																	child: Text(
+																		all_questions[qindex].options[1],
+																		style: TextStyle(
+																			fontSize: 20.0,
+																		),
+																	),
+																),
+															),
+														),
+													)
+												),
+
+
+
+												Padding(
+													padding: EdgeInsets.all(15.0),
+													child: SizedBox(
+														width: double.infinity,
+														child: Card(
+															child: Padding(
+																padding: EdgeInsets.all(19.0),
+																child: InkWell(
+																	splashColor: Colors.cyan.withAlpha(30),
+																	onTap: (){
+																		checkAnswer(qindex, 2);
+																	},
+
+																	child: Text(
+																		all_questions[qindex].options[2],
+																		style: TextStyle(
+																			fontSize: 20.0,
+																		),
+																	),
+																),
+															),
+														),
+													)
+												),
+
+												Padding(
+													padding: EdgeInsets.all(15.0),
+													child: SizedBox(
+														width: double.infinity,
+														child: Card(
+															child: Padding(
+																padding: EdgeInsets.all(19.0),
+																child: InkWell(
+																	splashColor: Colors.cyan.withAlpha(30),
+																	onTap: (){
+																		checkAnswer(qindex, 3);
+																	},
+
+																	child: Text(
+																		all_questions[qindex].options[3],
+																		style: TextStyle(
+																			fontSize: 20.0,
+																		),
+																	),
+																),
+															),
+														),
+													)
+												),
+
+
+
+											],
+										),
+									),
+								),
+																
+							],
+						),
+					),
 				),
 
 		);
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
 
 
 
