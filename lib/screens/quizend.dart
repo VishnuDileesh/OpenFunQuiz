@@ -69,7 +69,7 @@ class QuizEnd extends StatelessWidget{
 							padding: EdgeInsets.all(12.0),
 							splashColor: Colors.cyanAccent,
 							onPressed: (){
-								Share.share("I scored ${score}/10 in OpenFunQuiz, Go and try out your geniusness");
+								Share.share("I scored ${score}/10 in OpenFunQuiz game app, Put your brains on fire & see how good can you score.");
 							},
 							child: Text(
 								"Share Score",
