@@ -7,12 +7,28 @@ import './quiz.dart';
 
 
 class HomeScreen extends StatefulWidget{
+	
+	final String playtoken;
+
+	HomeScreen({Key key, @required this.playtoken}) : super(key:key);
+
 	@override
 	_HomeScreenState createState() => _HomeScreenState();
 }
 
 
 class _HomeScreenState extends State<HomeScreen>{
+
+
+	@override
+	void initState(){
+		var ptoken = widget.playtoken;
+
+		print("Home SCREEEEEEEEEN");
+
+		print(ptoken);
+	}
+
 	@override
 	Widget build(BuildContext context){
 		return Scaffold(
@@ -27,7 +43,6 @@ class _HomeScreenState extends State<HomeScreen>{
 			),
 
 			body: SafeArea(
-				//alignment: Alignment.center,
 
 				child: ListView.builder(
 					itemCount: categories.length,
@@ -40,7 +55,7 @@ class _HomeScreenState extends State<HomeScreen>{
 									Navigator.push(
 										context,
 										MaterialPageRoute(
-											builder: (context) => Quiz(catname: categories[index].name, catid: categories[index].id)
+											builder: (context) => Quiz(catname: categories[index].name, catid: categories[index].id, ptoken: widget.playtoken)
 										),
 									);
 								},
@@ -77,52 +92,11 @@ class _HomeScreenState extends State<HomeScreen>{
 									],
 								),
 
-								/*
-								child: Padding(
-									//height: 50.0,
-									padding: const EdgeInsets.all(10.0),
-									child: Center(
-										child: Text(
-											categoriesindex.name,
-											style: TextStyle(
-												fontSize: 25.0,
-												fontWeight: FontWeight.bold,
-											),
-										),
-									),
-								),
-
-								*/
 							),
 						);
 					}
 				),
 
-				/*
-				child: Card(
-					child: InkWell(
-						splashColor: Colors.cyan.withAlpha(30),
-						onTap: (){
-							print("Hello");
-						},
-
-						child: Container(
-							height: 50.0,
-							width: 300.0,
-							padding: const EdgeInsets.all(10.0),
-							child: Center(
-								child: Text(
-									"Hello World",
-									style: TextStyle(
-										fontSize: 25.0,
-										fontWeight: FontWeight.bold,
-									),
-								),
-							),
-						),
-					),
-				),
-				*/
 			),
 		);
 	}

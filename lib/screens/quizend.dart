@@ -5,8 +5,9 @@ import 'package:share/share.dart';
 class QuizEnd extends StatelessWidget{
 
 	final int score;
+	final String ptoken;
 
-	QuizEnd({Key key, @required this.score}) : super(key: key);
+	QuizEnd({Key key, @required this.score, @required this.ptoken}) : super(key: key);
 
 	@override
 	Widget build(BuildContext context){
@@ -47,7 +48,7 @@ class QuizEnd extends StatelessWidget{
 								Navigator.pushAndRemoveUntil(
 									context,
 									MaterialPageRoute(
-										builder: (context) => HomeScreen()
+										builder: (context) => HomeScreen(playtoken: ptoken)
 									),
 									(Route<dynamic> route) => false,
 								);

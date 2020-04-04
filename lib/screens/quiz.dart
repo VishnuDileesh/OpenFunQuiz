@@ -7,16 +7,18 @@ import 'dart:convert';
 import '../models/question.dart';
 import 'quizend.dart';
 import 'loading.dart';
+import 'dryscreen.dart';
 
 
 class Quiz extends StatefulWidget{
 
 	final String catname;
 	final int catid;
+	final String ptoken;
 
 
 
-	Quiz({Key key, @required this.catname, @required this.catid}) : super(key: key);
+	Quiz({Key key, @required this.catname, @required this.catid, @required this.ptoken}) : super(key: key);
 	
 	@override
 	_QuizState createState() => _QuizState();
@@ -34,7 +36,7 @@ class _QuizState extends State<Quiz>{
 
 	int qindex = 0;
 	int score = 0;
-	String playtoken = "";
+//	String playtoken = "";
 	bool showOptions = true;
 	bool showAnswer = false;
 	bool correctAnswer = false;
@@ -42,6 +44,7 @@ class _QuizState extends State<Quiz>{
 	bool showNext = false;
 	bool showSubmit = false;
 	bool qloading = true;
+	bool dryquest = false;
 
 
 	@override
@@ -49,6 +52,7 @@ class _QuizState extends State<Quiz>{
 		super.initState();
 		fetchData();
 	}
+
 
 	void checkAnswer(int qind, int opind){
 //		print("Question Index ${qind}");
@@ -93,34 +97,14 @@ class _QuizState extends State<Quiz>{
 			qindex++;
 		});
 	}
-
-	Future<void> fetchToken() async{
-
-			final String tokenapi = "https://opentdb.com/api_token.php?command=request";
-
-			var tokenres = await http.get(tokenapi);
-
-			var tokendata = json.decode(tokenres.body);
-
-			setState((){
-				playtoken = tokendata["token"];
-			});
-
-			print(playtoken);
-
-
-	}
-
+	
 	Future<List<Question>> fetchData() async{
 
 		var cid = widget.catid;
+		var pt = widget.ptoken;
 
-		if(playtoken == ""){
-			fetchToken();
 
-		}
-
-		final String api = "https://opentdb.com/api.php?amount=10&category=${cid}&difficulty=easy&type=multiple&token=${playtoken}";
+		final String api = "https://opentdb.com/api.php?amount=10&category=${cid}&difficulty=easy&type=multiple&token=${pt}";
 
 		var response = await http.get(
 			Uri.encodeFull(api),
@@ -129,11 +113,13 @@ class _QuizState extends State<Quiz>{
 			}
 		);
 
-		print("Helloooooo");
 
 		var data = json.decode(response.body);
 
-		print(data["response_code"]);
+
+		if (data["response_code"] != 0){
+			dryquest = true;
+		}
 
 
 
@@ -197,7 +183,8 @@ class _QuizState extends State<Quiz>{
 					child: (qloading == true)?
 					LoadingScreen():
 					SingleChildScrollView(
-						child: Column(
+						child: (dryquest == false)?
+						Column(
 							children: <Widget>[
 								SizedBox(height: 20.0),
 
@@ -306,7 +293,7 @@ class _QuizState extends State<Quiz>{
 											Navigator.pushAndRemoveUntil(
 												context,
 												MaterialPageRoute(
-													builder: (context) => QuizEnd(score: score),
+													builder: (context) => QuizEnd(score: score, ptoken: widget.ptoken),
 												),
 												(Route<dynamic> route) => false,
 											);
@@ -435,7 +422,7 @@ class _QuizState extends State<Quiz>{
 								),
 																
 							],
-						),
+						):DryScreen(ptoken: widget.ptoken),
 					),
 				),
 
