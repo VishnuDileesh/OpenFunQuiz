@@ -6,6 +6,7 @@ import 'dart:async';
 import 'dart:convert';
 import '../models/question.dart';
 import 'quizend.dart';
+import 'loading.dart';
 
 
 class Quiz extends StatefulWidget{
@@ -27,17 +28,27 @@ class _QuizState extends State<Quiz>{
 	//List questionData;	
 	//Map data;
 
+
 	List<Question> all_questions = [];
+
 
 	int qindex = 0;
 	int score = 0;
+	String playtoken = "";
 	bool showOptions = true;
 	bool showAnswer = false;
 	bool correctAnswer = false;
 	bool wrongAnswer = false;
 	bool showNext = false;
 	bool showSubmit = false;
+	bool qloading = true;
 
+
+	@override
+	void initState(){
+		super.initState();
+		fetchData();
+	}
 
 	void checkAnswer(int qind, int opind){
 //		print("Question Index ${qind}");
@@ -83,13 +94,33 @@ class _QuizState extends State<Quiz>{
 		});
 	}
 
+	Future<void> fetchToken() async{
 
+			final String tokenapi = "https://opentdb.com/api_token.php?command=request";
+
+			var tokenres = await http.get(tokenapi);
+
+			var tokendata = json.decode(tokenres.body);
+
+			setState((){
+				playtoken = tokendata["token"];
+			});
+
+			print(playtoken);
+
+
+	}
 
 	Future<List<Question>> fetchData() async{
 
 		var cid = widget.catid;
 
-		final String api = "https://opentdb.com/api.php?amount=10&category=${cid}&difficulty=easy&type=multiple";
+		if(playtoken == ""){
+			fetchToken();
+
+		}
+
+		final String api = "https://opentdb.com/api.php?amount=10&category=${cid}&difficulty=easy&type=multiple&token=${playtoken}";
 
 		var response = await http.get(
 			Uri.encodeFull(api),
@@ -98,7 +129,13 @@ class _QuizState extends State<Quiz>{
 			}
 		);
 
+		print("Helloooooo");
+
 		var data = json.decode(response.body);
+
+		print(data["response_code"]);
+
+
 
 		var unescape = new HtmlUnescape();
 
@@ -130,8 +167,15 @@ class _QuizState extends State<Quiz>{
 			all_questions.add(aq);
 		}
 
+		setState((){
+			qloading = false;
+		});
+
 
 		return all_questions;
+
+	
+
 
 	}
 
@@ -148,298 +192,10 @@ class _QuizState extends State<Quiz>{
 				),
 				automaticallyImplyLeading: false,
 			),
+
 			body: Container(
-				child: FutureBuilder(
-					future: fetchData(),
-					builder: (BuildContext context, AsyncSnapshot snapshot){
-						if(snapshot.data == null){
-							return Material(
-								color: Colors.cyan,
-								child: Center(
-									child: Column(
-										mainAxisAlignment: MainAxisAlignment.center,
-										children: <Widget>[
-											Text(
-												"Your Quiz is being loaded...",
-												style: TextStyle(
-													color: Colors.white,
-													fontSize: 25.0,
-													fontWeight: FontWeight.bold,
-												),
-											),
-
-											SizedBox(height: 20.0,),
-
-											CircularProgressIndicator(backgroundColor: Colors.white,),
-										],
-									),
-								),
-							);
-						}else{
-							return Container(
-								child: SingleChildScrollView(
-								child: Column(
-									children: <Widget>[
-										SizedBox(height: 20.0),
-
-										Center(
-											child: Card(
-												child: Padding(
-													padding: EdgeInsets.all(16.0),
-													child: Text(
-														snapshot.data[qindex].quest,
-														style: TextStyle(
-															fontSize: 25.0,
-															fontWeight: FontWeight.bold,
-														),
-													),
-												),
-											),								
-										),
-
-										SizedBox(height: 50.0),
-
-										Visibility(
-											visible: correctAnswer,
-											child: Text(
-												"You Answered Correct",
-												style: TextStyle(
-													color: Colors.green,
-													fontSize: 30.0,
-													fontWeight: FontWeight.bold,
-												),
-											),
-										),
-
-										Visibility(
-											visible: wrongAnswer,
-											child: Text(
-												"You Answered Wrong",
-												style: TextStyle(
-													color: Colors.red,
-													fontSize: 30.0,
-													fontWeight: FontWeight.bold,
-												),
-											),
-										),
-
-										Visibility(
-											visible: showAnswer,
-											child: Column(
-												children: <Widget>[
-
-													SizedBox(height: 20.0,),
-
-													Center(
-														child: Text(
-															"Answer:",
-															style: TextStyle(
-																fontSize: 25.0,
-																fontWeight: FontWeight.bold,
-															),
-														),
-													),
-
-													SizedBox(height: 5.0,),
-													
-
-													Center(
-														child: Text(
-															snapshot.data[qindex].answer,
-															style: TextStyle(
-																fontSize: 25.0,
-																fontWeight: FontWeight.bold,
-															),
-														),
-													),
-
-													SizedBox(height: 40.0,),
-												],
-											),
-										),
-
-
-
-
-
-										Visibility(
-											visible: showNext,
-											child: FlatButton(
-												color: Colors.cyan,
-												textColor: Colors.white,
-												padding: EdgeInsets.all(16.0),
-												splashColor: Colors.cyanAccent,
-												onPressed: (){
-													nextQuestion();
-												},
-												child: Text(
-													"Next Question",
-													style: TextStyle(fontSize: 20.0),
-												),
-											),
-										),
-
-										Visibility(
-											visible: showSubmit,
-											child: FlatButton(
-												color: Colors.cyan,
-												textColor: Colors.white,
-												padding: EdgeInsets.all(16.0),
-												splashColor: Colors.cyanAccent,
-												onPressed: (){
-													Navigator.pushAndRemoveUntil(
-														context,
-														MaterialPageRoute(
-															builder: (context) => QuizEnd(score: score),
-														),
-														(Route<dynamic> route) => false,
-													);
-												},
-
-												child: Text(
-													"End Quiz",
-													style: TextStyle(fontSize: 20.0),
-												),
-											),
-										),
-
-										Visibility(
-											visible: showOptions,
-											child: 
-
-										Container(
-											child: Column(
-											children: <Widget>[
-											
-											
-											Padding(
-												padding: EdgeInsets.all(15.0),
-												child: SizedBox(
-													width: double.infinity,
-													child: Card(
-														child: Padding(
-															padding: EdgeInsets.all(19.0),
-															child: InkWell(
-																splashColor: Colors.cyan.withAlpha(30),
-																	onTap: (){
-																	checkAnswer(qindex, 0);
-																	},
-
-																	child: Text(
-																		snapshot.data[qindex].options[0],
-																		style: TextStyle(
-																		fontSize: 20.0,
-																		),
-																	),
-																),
-															),
-														),
-													),
-												),
-										
-
-
-											
-											Padding(
-												padding: EdgeInsets.all(15.0),
-												child: SizedBox(
-													width: double.infinity,
-													child: Card(
-														child: Padding(
-															padding: EdgeInsets.all(19.0),
-															child: InkWell(
-																splashColor: Colors.cyan.withAlpha(30),
-																	onTap: (){
-																	checkAnswer(qindex, 1);
-																	},
-
-																	child: Text(
-																		snapshot.data[qindex].options[1],
-																		style: TextStyle(
-																		fontSize: 20.0,
-																		),
-																	),
-																),
-															),
-														),
-													),
-												),
-										
-
-
-											
-											Padding(
-												padding: EdgeInsets.all(15.0),
-												child: SizedBox(
-													width: double.infinity,
-													child: Card(
-														child: Padding(
-															padding: EdgeInsets.all(19.0),
-															child: InkWell(
-																splashColor: Colors.cyan.withAlpha(30),
-																	onTap: (){
-																	checkAnswer(qindex, 2);
-																	},
-
-																	child: Text(
-																		snapshot.data[qindex].options[2],
-																		style: TextStyle(
-																		fontSize: 20.0,
-																		),
-																	),
-																),
-															),
-														),
-													),
-												),
-										
-
-
-
-											
-											Padding(
-												padding: EdgeInsets.all(15.0),
-												child: SizedBox(
-													width: double.infinity,
-													child: Card(
-														child: Padding(
-															padding: EdgeInsets.all(19.0),
-															child: InkWell(
-																splashColor: Colors.cyan.withAlpha(30),
-																	onTap: (){
-																	checkAnswer(qindex, 3);
-																	},
-
-																	child: Text(
-																		snapshot.data[qindex].options[3],
-																		style: TextStyle(
-																		fontSize: 20.0,
-																		),
-																	),
-																),
-															),
-														),
-													),
-												),
-										
-
-
-
-
-												],
-											),
-										),
-									),
-	
-
-									],
-								),
-								),
-							);
-						}
-					},
-				)
-			),
+					child: LoadingScreen(),
+				),
 
 		);
 	}
